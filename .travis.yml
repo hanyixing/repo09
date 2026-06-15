@@ -1,3 +1,35 @@
+# ============================================
+# Travis CI Configuration for Tale Blog
+# ============================================
+
 language: java
+
 jdk:
   - oraclejdk8
+  - openjdk8
+
+# Cache Maven dependencies
+cache:
+  directories:
+    - $HOME/.m2/repository
+
+# Build lifecycle
+install:
+  - mvn dependency:go-offline -B
+
+script:
+  - mvn clean compile -B
+  - mvn test -B
+  - mvn package -P prod -DskipTests -B
+
+# Generate JaCoCo coverage report
+after_success:
+  - mvn jacoco:report -B
+  # Upload to Codecov (free coverage hosting)
+  - bash <(curl -s https://codecov.io/bash) -f target/site/jacoco/jacoco.xml || echo "Codecov upload failed"
+
+# Notifications
+notifications:
+  email:
+    on_success: never
+    on_failure: always

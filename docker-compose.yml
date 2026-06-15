@@ -1,0 +1,62 @@
+# ============================================
+# Docker Compose for Tale Blog
+# ============================================
+# Usage:
+#   docker-compose up -d        # Start in background
+#   docker-compose up --build   # Rebuild and start
+#   docker-compose logs -f      # Follow logs
+#   docker-compose down         # Stop and remove
+# ============================================
+
+services:
+  tale-blog:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tale-blog
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      # SQLite database persistence
+      - tale-data:/app/data
+      # Upload files persistence
+      - tale-upload:/app/upload
+      # Log files persistence
+      - tale-logs:/app/logs
+      # Custom themes
+      - tale-themes:/app/templates/themes
+      # Plugins
+      - tale-plugins:/app/plugins
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx256m
+      - TZ=Asia/Shanghai
+    networks:
+      - tale-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  tale-data:
+    driver: local
+  tale-upload:
+    driver: local
+  tale-logs:
+    driver: local
+  tale-themes:
+    driver: local
+  tale-plugins:
+    driver: local
+
+networks:
+  tale-network:
+    driver: bridge

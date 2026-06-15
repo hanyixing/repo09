@@ -10,9 +10,27 @@ target/
 .classpath
 .project
 
+# VS Code #
+.vscode/
+
 # logs file #
 logs/
 
 # database file #
 tale.db
 pack.sh
+
+# OS files #
+.DS_Store
+Thumbs.db
+
+# Environment / secrets #
+.env
+*.env.local
+application-local.properties
+
+# Docker #
+docker-compose.override.yml
+
+# Sensitive config (local overrides) #
+*-local.properties

@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# Build output (will rebuild in container)
+target
+
+# Documentation
+*.md
+LICENSE
+
+# Docker files
+Dockerfile
+docker-compose.yml
+docker-compose.override.yml
+
+# CI/CD
+.github
+.travis.yml
+
+# Local environment
+.env
+*.env.local
+application-local.properties
+
+# Logs
+logs
+
+# Database
+tale.db
+
+# OS files
+.DS_Store
+Thumbs.db
