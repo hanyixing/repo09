@@ -1,0 +1,21 @@
+# ============================================
+# 测试环境配置 (Test)
+# 说明: Blade MVC 2.0.14 运行时仅解析 .properties 配置,
+#       实际生效的配置见同目录 application-test.properties。
+#       本 YAML 文件用于自动化测试 / CI 的可读配置说明。
+# ============================================
+app:
+  env: test
+  devMode: true
+
+server:
+  address: 0.0.0.0
+  port: 9001
+
+# 日志配置(测试环境仅保留警告及以上)
+com:
+  blade:
+    logger:
+      dir: ./logs
+      root: warn
+      org.sql2o: warn

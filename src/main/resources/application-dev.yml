@@ -1,0 +1,22 @@
+# ============================================
+# 开发环境配置 (Development)
+# 说明: Blade MVC 2.0.14 运行时仅解析 .properties 配置,
+#       实际生效的配置见同目录 application-dev.properties。
+#       本 YAML 文件作为更易读的环境配置说明 / 文档与 CI 参考。
+# ============================================
+app:
+  env: dev
+  # 开发模式: 使用项目根目录下的 tale.db, 模板/静态资源热加载
+  devMode: true
+
+server:
+  address: 0.0.0.0
+  port: 9000
+
+# 日志配置(开发环境输出更详细日志)
+com:
+  blade:
+    logger:
+      dir: ./logs
+      com.tale: debug
+      org.sql2o: debug

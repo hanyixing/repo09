@@ -1,0 +1,66 @@
+# ============================================================
+# tale 博客系统编排
+# - mysql : 关系型数据库服务 (统一编排预留)。
+#           注意: 当前 tale 代码内置使用 SQLite (见 SqliteJdbc/Bootstrap),
+#           博客服务实际运行于 SQLite; MySQL 在此作为编排组件预留, 供后续
+#           接入或周边服务使用。
+# - tale  : 博客应用, 由本仓库 Dockerfile 构建, 默认监听 9000 端口。
+# ============================================================
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: tale-mysql
+    restart: unless-stopped
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-talerootpwd}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-tale}
+      MYSQL_USER: ${MYSQL_USER:-tale}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-talepwd}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD:-talerootpwd}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - tale-net
+
+  tale:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: tale:latest
+    container_name: tale-blog
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "9000:9000"
+    environment:
+      # tale 当前使用内置 SQLite; 以下 MySQL 连接信息为统一编排预留(应用暂不读取)。
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_NAME: ${MYSQL_DATABASE:-tale}
+      DB_USER: ${MYSQL_USER:-tale}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-talepwd}
+    volumes:
+      # 持久化资源目录(包含 SQLite 数据库 tale.db 与上传文件)。
+      # 首次启动由 docker-entrypoint.sh 从镜像内置资源初始化。
+      - tale-data:/app/resources
+    networks:
+      - tale-net
+
+volumes:
+  mysql-data:
+  tale-data:
+
+networks:
+  tale-net:
+    driver: bridge

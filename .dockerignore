@@ -1,0 +1,27 @@
+# build output
+target/
+**/target/
+
+# vcs / ci
+.git/
+.gitignore
+.github/
+
+# IDE
+.idea/
+*.iml
+.settings/
+.classpath
+.project
+
+# runtime / data
+logs/
+*.db
+*.log
+back_*.tar.gz
+upgrade_tmp/
+
+# docker / docs not needed in build context
+docker-compose.yml
+.dockerignore
+README*.md

@@ -1,3 +1,21 @@
 language: java
+
 jdk:
   - oraclejdk8
+
+cache:
+  directories:
+    - $HOME/.m2/repository
+
+# 跳过 Travis 默认依赖安装, 由 script 统一执行
+install: true
+
+script:
+  # 编译并运行单元测试; JaCoCo 在 test 阶段自动生成覆盖率报告 (target/site/jacoco)
+  - mvn -B -Pdev clean test
+
+after_success:
+  # 汇总 JaCoCo 覆盖率报告
+  - mvn -B jacoco:report
+  # 如需上传至 Codecov, 取消注释并在 Travis 中配置 CODECOV_TOKEN:
+  # - bash <(curl -s https://codecov.io/bash)
